@@ -1,0 +1,13 @@
+void loopStart();
+bool readSerialMessage();
+void starterButtonBox();
+void turnButton();
+void loopEnd();
+void ignition();
+void starter();
+void engineRunning();
+void readEngineMode();
+bool isIgnitionOnByTelemetry();
+bool isEngineOnByTelemetry();
+void everyNTicks(void (*func)(), int ticks);
+void engineRunningSwitchState();

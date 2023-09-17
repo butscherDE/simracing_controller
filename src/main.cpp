@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <BleCombo.h>
+#include "ESP32-BLE-Combo/BleCombo.h"
 #include "typedef.h"
-#include "MessageContainer.h"
-#include "MessageParser.h"
+#include "messaging/MessageContainer.h"
+#include "messaging/MessageParser.h"
+#include "main.h"
 
 #define MAX_STRING_LENGTH 50
 #define MAX_ARRAY_SIZE 10
@@ -59,7 +60,6 @@ void loop() {
   readSerialMessage();
 
   starterButtonBox();
-  turnButton();
 
   loopEnd();
 }
@@ -188,52 +188,5 @@ void engineRunningSwitchState() {
 void everyNTicks(void (*func)(), int ticks) {
   if (globalTicks % ticks == 0) {
     func();
-  }
-}
-
-void turnButton() {
-  minus();
-  plus();
-  key();
-  keyLed();
-}
-
-void minus() {
-  int minusSignal = digitalRead(minusPin);
-
-  //Serial.print("minusSignal ");
-  //Serial.println(minusSignal);
-
-  if (minusSignal == HIGH) {
-    Keyboard.write(KEY_MEDIA_VOLUME_DOWN);
-  } 
-}
-
-void plus() {
-  int plusSignal = digitalRead(plusPin);
-
-  if (plusSignal == HIGH) {
-    Keyboard.write(KEY_MEDIA_VOLUME_UP);
-  }
-}
-
-void key() {
-  int keySignal = digitalRead(keyPin);
-
-  //Serial.print("keySignal ");
-  //Serial.println(keySignal);
-
-  if (keySignal == HIGH) {
-    Keyboard.write(KEY_MEDIA_MUTE);
-  }
-}
-
-void keyLed() {
-  int keySignal = digitalRead(keyPin);
-
-  if (keySignal == HIGH) {
-    digitalWrite(ledActivatePin, HIGH);
-  } else {
-    digitalWrite(ledActivatePin,  LOW);
   }
 }
