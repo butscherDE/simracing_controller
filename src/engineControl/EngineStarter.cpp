@@ -6,16 +6,15 @@
 #include <HardwareSerial.h>
 
 EngineStarter::EngineStarter(
-    HardwareSerial& serial,
     int ignitionSwitchPin,
     int starterButtonPin,
+    MessageContainer* lastMessage,
     bool lastIgnitionState,
     bool engineRunningLedState,
     bool isStarterPressed
-) : serial(serial), ignitionSwitchPin(ignitionSwitchPin),
+) : ignitionSwitchPin(ignitionSwitchPin), lastMessage(lastMessage),
     starterButtonPin(starterButtonPin), lastIgnitionState(lastIgnitionState),
     engineRunningLedState(engineRunningLedState), isStarterPressed(isStarterPressed) {
-    // Constructor implementation (if needed)
 }
 
 void EngineStarter::starterButtonBox() {
@@ -32,12 +31,10 @@ void EngineStarter::ignition() {
   Serial.print(switchSignal);
 
   if (!lastIgnitionState && switchSignal == HIGH) {
-    //digitalWrite(ignitionSwitchLedPin, HIGH);
     lastIgnitionState = true;
     Keyboard.print("i");
   } 
   if (lastIgnitionState && switchSignal == LOW) {
-    //digitalWrite(ignitionSwitchLedPin, LOW);
     lastIgnitionState = false;
     Keyboard.print("i");
   }
@@ -50,10 +47,8 @@ void EngineStarter::starter() {
   Serial.print(isStarterPressed);
 
   if (isStarterPressed == HIGH) {
-    //digitalWrite(starterButtonLedPin, HIGH);
     Keyboard.press(0x73);
   } else {
-    digitalWrite(starterButtonLedPin, LOW);
     Keyboard.release(0x73);
   }
 }
@@ -76,44 +71,14 @@ void EngineStarter::readEngineMode() {
 
 bool EngineStarter::isIgnitionOnByTelemetry() {
   float value = 0.0;
-  lastMessage.getValueByMessageType("IO", &value);
+  lastMessage->getValueByMessageType("IO", &value);
 
   return value == 1.0;
 }
 
 bool EngineStarter::isEngineOnByTelemetry() {
   float value = 0.0;
-  lastMessage.getValueByMessageType("EO", &value);
+  lastMessage->getValueByMessageType("EO", &value);
 
   return value == 1.0;
-}
-
-void EngineStarter::engineRunning() { // 0 = ignition off, 1 = ignition on, engine off, 2 = starting, 3 = started
-    /*
-    switch (engineMode) {
-        case 0:
-            digitalWrite(runningLedPin, LOW);
-            break;
-        case 1:
-            everyNTicks(engineRunningSwitchState, 100);
-            break;
-        case 2:
-            everyNTicks(engineRunningSwitchState, 10);
-            break;
-        case 3:
-            digitalWrite(runningLedPin, HIGH);
-            break;
-        default:
-            break;
-    }*/
-}
-
-void EngineStarter::engineRunningSwitchState() {
-  if (engineRunningLedState) {
-    digitalWrite(runningLedPin, LOW);
-    engineRunningLedState = false;
-  } else {
-    digitalWrite(runningLedPin, HIGH);
-    engineRunningLedState = true;
-  }
 }
