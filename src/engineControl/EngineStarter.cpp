@@ -6,26 +6,32 @@
 #include <HardwareSerial.h>
 
 EngineStarter::EngineStarter(
-    int ignitionSwitchPin,
-    int starterButtonPin,
-    MessageContainer* lastMessage,
-    bool lastIgnitionState,
-    bool engineRunningLedState,
-    bool isStarterPressed
-) : ignitionSwitchPin(ignitionSwitchPin), lastMessage(lastMessage),
-    starterButtonPin(starterButtonPin), lastIgnitionState(lastIgnitionState),
-    engineRunningLedState(engineRunningLedState), isStarterPressed(isStarterPressed) {
+  int pinIgnitionSwitch,
+  int pinEngineStarterButton,
+  MessageContainer* lastMessage
+) : pinIgnitionSwitch(pinIgnitionSwitch), pinStarterButton(pinEngineStarterButton), lastMessage(lastMessage) {
+  lastIgnitionState = false;
+  engineRunningLedState = false;
+  isStarterPressed = false;
+
+  pinMode(pinIgnitionSwitch, INPUT);
+  pinMode(pinEngineStarterButton, INPUT);
 }
 
 void EngineStarter::starterButtonBox() {
+
+  Serial.print("pinIgnitionSwitch: ");
+  Serial.print(pinIgnitionSwitch);
+  Serial.print(", pinEngineStarterButton: ");
+  Serial.println(pinStarterButton);
+
   ignition();
   starter();
-  engineRunning();
   readEngineMode();
 }
 
 void EngineStarter::ignition() {
-  int switchSignal = digitalRead(ignitionSwitchPin);
+  int switchSignal = digitalRead(pinIgnitionSwitch);
 
   Serial.print("i:");
   Serial.print(switchSignal);
@@ -41,7 +47,7 @@ void EngineStarter::ignition() {
 }
 
 void EngineStarter::starter() {
-  isStarterPressed = digitalRead(starterButtonPin);
+  isStarterPressed = digitalRead(pinStarterButton);
 
   Serial.print(", s:");
   Serial.print(isStarterPressed);
